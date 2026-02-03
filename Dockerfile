@@ -35,8 +35,8 @@ RUN mkdir -p /app/staticfiles /app/media
 # Exponer el puerto
 EXPOSE 8000
 
-# Temporalmente comentar el entrypoint para diagnosticar
-# ENTRYPOINT ["/app/entrypoint.sh"]
+# Usar el script de entrada para esperar a la DB y aplicar migraciones
+ENTRYPOINT ["/app/entrypoint.sh"]
 
-# Comando directo que aplica migraciones y arranca
-CMD ["sh", "-c", "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn --bind 0.0.0.0:8000 --workers 3 backyard_bar.wsgi:application"]
+# Comando final que arranca el servidor a través de Gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "backyard_bar.wsgi:application"]
