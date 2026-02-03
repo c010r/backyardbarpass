@@ -1,33 +1,34 @@
 # Guía de Despliegue en Coolify - Backyard Bar Pass 🚀
 
-Esta guía detalla los pasos necesarios para desplegar el sistema en un VPS propio utilizando **Coolify** de forma profesional.
+Esta guía detalla los pasos para desplegar con dominios separados:
+*   **Frontend**: `https://entradas.backyardbar.fun`
+*   **Backend/API**: `https://api.backyardbar.fun`
 
 ## 1. Requisitos Previos
-*   Tener Coolify instalado en tu VPS.
-*   Tener un dominio apuntando a la IP de tu VPS (ej. `https://backyardpass.uy`).
-*   Tener acceso al repositorio: `https://github.com/c010r/backyardbarpass.git`.
+*   Dominio `backyardbar.fun` con subdominios `entradas` y `api` apuntando a la IP del VPS.
 
-## 2. Crear el Proyecto en Coolify
-1.  Entra a tu panel de Coolify.
-2.  Ve a **Projects** -> **Create New Project** -> Nómbralo como `Backyard Bar`.
-3.  Dentro del proyecto, haz clic en **+ New** -> **Service**.
-4.  Selecciona **Public Repository** (o conecta con tu GitHub).
-5.  Pega la URL: `https://github.com/c010r/backyardbarpass.git`
-6.  En el paso de configuración, selecciona **Docker Compose**.
+## 2. Configuración en Coolify
+1.  **Nuevo Servicio**: Crea un servicio desde el repositorio GitHub.
+2.  **Compose**: Usa el archivo `./docker-compose-coolify.yml`.
+3.  **Dominios**:
+    *   En el servicio **frontend**, asigna el dominio `https://entradas.backyardbar.fun`.
+    *   En el servicio **backend**, asigna el dominio `https://api.backyardbar.fun`.
 
-## 3. Configuración del Archivo Compose
-Coolify detectará el archivo por defecto, pero nosotros creamos uno optimizado:
-1.  En la pestaña **General**, busca el campo **Docker Compose Location**.
-2.  Cámbialo a: `./docker-compose-coolify.yml`.
-3.  Haz clic en **Save**.
+## 3. Variables de Entorno (Crucial)
+Configura estas variables en la pestaña **Environment Variables** de Coolify:
 
-## 4. Configurar el Dominio y Puerto
-1.  Busca la lista de servicios y selecciona el que se llama **`frontend`**.
-2.  En el campo **Domains**, ingresa tu dominio con https (ej: `https://backyardpass.uy`).
-3.  **Importante**: Coolify detectará automáticamente que debe enviar el tráfico al puerto `80` interno de ese contenedor. No necesitas mapear puertos manuales.
+```env
+# URL de la API que usará el frontend para compilarse
+VITE_API_URL=https://api.backyardbar.fun
 
-## 5. Cargar Variables de Entorno (Environment Variables) 🔐
-Esta parte es crucial. Ve a la pestaña **Environment Variables** e importa las siguientes de forma masiva (Bulk Import):
+# Configuración de seguridad de Django
+ALLOWED_HOSTS=api.backyardbar.fun,localhost
+CORS_ALLOWED_ORIGINS=https://entradas.backyardbar.fun
+CSRF_TRUSTED_ORIGINS=https://entradas.backyardbar.fun,https://api.backyardbar.fun
+
+# Base URL para Mercado Pago (Webhook)
+BASE_URL=https://api.backyardbar.fun
+```
 
 ```env
 POSTGRES_DB=backyard_db

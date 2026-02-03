@@ -15,7 +15,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    # Solo volúmenes para archivos generados, NO para código
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media
@@ -27,7 +26,11 @@ services:
       - DEBUG=False
       - SECRET_KEY=${SECRET_KEY}
       - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-api.backyardbar.fun,localhost}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-https://entradas.backyardbar.fun}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-https://entradas.backyardbar.fun,https://api.backyardbar.fun}
+    ports:
+      - "8000:8000"
     depends_on:
       - db
     restart: always
@@ -55,13 +58,9 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.prod
       args:
-        - VITE_API_URL=${VITE_API_URL}
-    volumes:
-      - static_volume:/app/staticfiles:ro
-      - media_volume:/app/media:ro
+        - VITE_API_URL=${VITE_API_URL:-https://api.backyardbar.fun}
     ports:
       - "80:80"
-    # Coolify usará su proxy interno, pero para Hostinger necesitamos el mapeo directo
     depends_on:
       - backend
     restart: always
