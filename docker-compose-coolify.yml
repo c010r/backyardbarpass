@@ -58,9 +58,7 @@ services:
     volumes:
       - static_volume:/app/staticfiles:ro
       - media_volume:/app/media:ro
-    # Coolify usará este servicio para exponer el puerto 80 al exterior
-    ports:
-      - "80:80"
+    # Coolify usará su proxy interno para conectar el dominio al puerto 80 de este contenedor
     depends_on:
       - backend
     restart: always
