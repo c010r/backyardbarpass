@@ -29,7 +29,7 @@ services:
       - ALLOWED_HOSTS=${ALLOWED_HOSTS:-api.backyardbar.fun,localhost}
       - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS:-https://entradas.backyardbar.fun}
       - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-https://entradas.backyardbar.fun,https://api.backyardbar.fun}
-    # En Coolify no mapeamos puertos al host si usamos FQDN
+    # En Coolify NO se mapean puertos al Host. El Proxy se encarga.
     depends_on:
       - db
     restart: always
@@ -58,7 +58,7 @@ services:
       dockerfile: Dockerfile.prod
       args:
         - VITE_API_URL=${VITE_API_URL:-https://api.backyardbar.fun}
-    # En Coolify no mapeamos puertos al host si usamos FQDN
+    # En Coolify NO se mapean puertos al Host. El Proxy se encarga.
     depends_on:
       - backend
     restart: always
