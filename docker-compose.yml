@@ -32,10 +32,12 @@ services:
       - mailpit
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     container_name: backyard-frontend
     ports:
-      - "80:5173"
+      - "80:80"
     env_file:
       - .env
     environment:
