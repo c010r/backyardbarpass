@@ -22,9 +22,9 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el archivo entrypoint explícitamente primero
+# Copiar e instalar el entrypoint
 COPY backend_entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
 
 # Copiar el resto del proyecto
 COPY . /app/
