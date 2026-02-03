@@ -35,7 +35,7 @@ services:
     build: ./frontend
     container_name: backyard-frontend
     ports:
-      - "5173:5173"
+      - "80:5173"
     env_file:
       - .env
     environment:
