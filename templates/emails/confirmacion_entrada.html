@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tus Entradas - Backyard Bar</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .wrapper {
+            width: 100%;
+            table-layout: fixed;
+            background-color: #0f172a;
+            padding-bottom: 60px;
+        }
+
+        .main {
+            background-color: #1e293b;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 600px;
+            border-spacing: 0;
+            color: #f8fafc;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid #334155;
+            margin-top: 40px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #000000;
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.025em;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            margin-bottom: 24px;
+            color: #e2e8f0;
+        }
+
+        .event-card {
+            background-color: #0f172a;
+            border-radius: 20px;
+            padding: 24px;
+            margin: 30px 0;
+            border: 1px solid #fbbf24;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+        }
+
+        .event-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #fbbf24;
+        }
+
+        .event-details {
+            font-size: 16px;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .ticket-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .ticket-grid {
+            margin: 20px 0;
+        }
+
+        .ticket-item {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            display: inline-block;
+            margin: 10px;
+            width: 200px;
+        }
+
+        .qr-image {
+            width: 200px;
+            height: 200px;
+            display: block;
+        }
+
+        .ticket-id {
+            color: #0f172a;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .button {
+            background-color: #fbbf24;
+            color: #000000 !important;
+            padding: 16px 32px;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .footer {
+            padding: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .divider {
+            border-top: 1px solid #334155;
+            margin: 40px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <table class="main">
+            <tr>
+                <td class="header">
+                    <h1>¡Tus Entradas están listas!</h1>
+                </td>
+            </tr>
+            <tr>
+                <td class="content">
+                    <p class="greeting">Hola <strong>{{ cliente.nombre }}</strong>,</p>
+                    <p>¡Gracias por elegir <strong>Backyard Bar</strong>! Tu acceso para vivir una noche increíble ha
+                        sido confirmado.</p>
+
+                    <div class="event-card">
+                        <div class="event-title">{{ evento.titulo }}</div>
+                        <div class="event-details">📅 {{ evento.fecha_inicio|date:"l d \d\e F, Y" }}</div>
+                        <div class="event-details">📍 {{ evento.ubicacion }}</div>
+                        <div class="event-details">🎟️ Lote: {{ orden.lote.nombre }}</div>
+                        <div class="event-details">🔢 Compra: #{{ orden.id }} ({{ orden.cantidad_entradas }} entradas)
+                        </div>
+                    </div>
+
+                    <div class="ticket-section">
+                        <h2 style="color: #fbbf24; font-size: 20px;">Tus Códigos de Acceso</h2>
+                        <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px;">Presenta estos códigos en la
+                            puerta directamente desde tu celular.</p>
+
+                        <div class="ticket-grid">
+                            {% for entrada in entradas_con_cid %}
+                            <div class="ticket-item">
+                                <img src="cid:{{ entrada.cid }}" alt="Código QR Entrada" class="qr-image">
+                                <div class="ticket-id">{{ entrada.id_resumido }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="button-container">
+                        <a href="{{ frontend_url }}/mis-entradas" class="button">MIS ENTRADAS EN LA WEB</a>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="footer">
+                    <p><strong>Backyard Bar Montevideo</strong></p>
+                    <p>Si tienes problemas con tus entradas, contáctanos respondiendo a este correo o vía Instagram
+                        @backyardbar.mvd</p>
+                    <p style="margin-top: 20px; font-size: 12px;">&copy; 2026 Backyard Bar. Todos los derechos
+                        reservados.</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

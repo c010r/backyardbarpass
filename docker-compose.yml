@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: backyard-db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=backyard_db
+      - POSTGRES_USER=backyard_user
+      - POSTGRES_PASSWORD=backyard_pass
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: .
+    container_name: backyard-backend
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE=postgres
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - DATABASE_URL=postgres://backyard_user:backyard_pass@db:5432/backyard_db
+      - EMAIL_HOST=mailpit
+      - EMAIL_PORT=1025
+    depends_on:
+      - db
+      - mailpit
+
+  frontend:
+    build: ./frontend
+    container_name: backyard-frontend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    env_file:
+      - .env
+    environment:
+      - VITE_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+
+  worker:
+    build: .
+    container_name: backyard-worker
+    volumes:
+      - .:/app
+    command: >
+      sh -c "while true; do 
+        python manage.py limpiar_reservas; 
+        sleep 60; 
+      done"
+    env_file:
+      - .env
+    environment:
+      - DATABASE=postgres
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - DATABASE_URL=postgres://backyard_user:backyard_pass@db:5432/backyard_db
+    depends_on:
+      - db
+    restart: always
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: backyard-mailpit
+    ports:
+      - "8025:8025" # Interfaz Web
+      - "1025:1025" # Servidor SMTP
+    restart: always
+
+volumes:
+  postgres_data:

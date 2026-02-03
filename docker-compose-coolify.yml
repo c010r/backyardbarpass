@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB:-backyard_db}
+      - POSTGRES_USER=${POSTGRES_USER:-backyard_user}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-backyard_pass}
+    restart: always
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    environment:
+      - DATABASE=postgres
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - DATABASE_URL=postgres://${POSTGRES_USER:-backyard_user}:${POSTGRES_PASSWORD:-backyard_pass}@db:5432/${POSTGRES_DB:-backyard_db}
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY}
+      - MP_ACCESS_TOKEN=${MP_ACCESS_TOKEN}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+    depends_on:
+      - db
+    restart: always
+
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE=postgres
+      - SQL_HOST=db
+      - SQL_PORT=5432
+      - DATABASE_URL=postgres://${POSTGRES_USER:-backyard_user}:${POSTGRES_PASSWORD:-backyard_pass}@db:5432/${POSTGRES_DB:-backyard_db}
+    command: >
+      sh -c "while true; do 
+        python manage.py limpiar_reservas; 
+        sleep 60; 
+      done"
+    depends_on:
+      - db
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+    volumes:
+      - static_volume:/app/staticfiles:ro
+      - media_volume:/app/media:ro
+    # Coolify usará este servicio para exponer el puerto 80 al exterior
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:

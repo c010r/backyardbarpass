@@ -1,0 +1,13 @@
+Django
+djangorestframework
+djangorestframework-simplejwt
+mercadopago
+Pillow
+python-decouple
+django-cors-headers
+psycopg2-binary
+dj-database-url
+gunicorn
+qrcode[pil]
+whitenoise
+dj-database-url==2.1.0
