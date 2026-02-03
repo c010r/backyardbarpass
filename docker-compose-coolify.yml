@@ -59,7 +59,9 @@ services:
     volumes:
       - static_volume:/app/staticfiles:ro
       - media_volume:/app/media:ro
-    # Coolify usará su proxy interno para conectar el dominio al puerto 80 de este contenedor
+    ports:
+      - "80:80"
+    # Coolify usará su proxy interno, pero para Hostinger necesitamos el mapeo directo
     depends_on:
       - backend
     restart: always
