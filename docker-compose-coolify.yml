@@ -15,6 +15,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    # Solo volúmenes para archivos generados, NO para código
     volumes:
       - static_volume:/app/staticfiles
       - media_volume:/app/media

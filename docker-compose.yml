@@ -16,8 +16,6 @@ services:
   backend:
     build: .
     container_name: backyard-backend
-    volumes:
-      - .:/app
     ports:
       - "8000:8000"
     env_file:
@@ -36,9 +34,6 @@ services:
   frontend:
     build: ./frontend
     container_name: backyard-frontend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
     ports:
       - "5173:5173"
     env_file:
