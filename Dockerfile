@@ -22,12 +22,12 @@ RUN apt-get update && apt-get install -y \
 COPY requirements.txt /app/
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar e instalar el entrypoint
-COPY backend_entrypoint.sh /app/entrypoint.sh
-RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
-
-# Copiar el resto del proyecto
+# Copiar el proyecto completo
 COPY . /app/
+
+# Configurar el entrypoint (mover después de la copia total para evitar sobrescritura de permisos)
+RUN sed -i 's/\r$//' /app/backend_entrypoint.sh && chmod +x /app/backend_entrypoint.sh
+RUN cp /app/backend_entrypoint.sh /app/entrypoint.sh
 
 # Crear directorios para estáticos y media
 RUN mkdir -p /app/staticfiles /app/media
