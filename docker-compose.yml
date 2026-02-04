@@ -31,25 +31,9 @@ services:
       - db
       - mailpit
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.prod
-    container_name: backyard-frontend
-    ports:
-      - "80:80"
-    env_file:
-      - .env
-    environment:
-      - VITE_API_URL=http://localhost:8000
-    depends_on:
-      - backend
-
   worker:
     build: .
     container_name: backyard-worker
-    volumes:
-      - .:/app
     command: >
       sh -c "while true; do 
         python manage.py limpiar_reservas; 
@@ -65,6 +49,19 @@ services:
     depends_on:
       - db
     restart: always
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+      args:
+        - VITE_API_URL=${VITE_API_URL:-http://localhost:8000}
+    container_name: backyard-frontend
+    ports:
+      - "80:80"
+    # El resto se mantiene igual
+    depends_on:
+      - backend
 
   mailpit:
     image: axllent/mailpit
