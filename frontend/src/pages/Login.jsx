@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { motion } from 'framer-motion';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -12,8 +12,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-            const res = await axios.post(`${API_URL}/api/auth/login/`, formData);
+            const res = await api.post('/auth/login/', formData);
 
             localStorage.setItem('token', res.data.token.access);
 

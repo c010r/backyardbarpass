@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from 'html5-qrcode';
-import axios from 'axios';
+import api from '../api';
 
 const Scanner = () => {
     const [scanResult, setScanResult] = useState(null);
@@ -8,8 +8,6 @@ const Scanner = () => {
     const [error, setError] = useState(null);
     const [isScanning, setIsScanning] = useState(true);
     const scannerRef = useRef(null);
-
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
     useEffect(() => {
         // Inicializar el scanner
@@ -39,12 +37,8 @@ const Scanner = () => {
 
         try {
             setLoading(true);
-            const token = localStorage.getItem('token'); // Asumimos que el staff está logueado
-
-            const response = await axios.post(`${API_URL}/api/validar-entrada/`, {
+            const response = await api.post('/validar-entrada/', {
                 codigo_qr: decodedText
-            }, {
-                headers: { 'Authorization': `Bearer ${token}` }
             });
 
             setScanResult(response.data);

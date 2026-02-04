@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { motion } from 'framer-motion';
 import { User, Mail, Lock, Phone, CreditCard, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +16,7 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:8000/api/auth/registro/', formData);
+            const res = await api.post('/auth/registro/', formData);
             localStorage.setItem('token', res.data.token.access);
             localStorage.setItem('cliente', JSON.stringify(res.data.cliente));
             window.location.href = '/';

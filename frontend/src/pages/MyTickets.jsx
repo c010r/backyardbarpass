@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import api from '../api';
+import api, { getMediaUrl } from '../api';
 import { motion } from 'framer-motion';
 import { Download, Calendar, MapPin, ScanLine, CheckCircle2 } from 'lucide-react';
 
@@ -104,7 +104,7 @@ const MyTickets = () => {
                                     display: 'flex', alignItems: 'center', justifyContent: 'center'
                                 }}>
                                     <img
-                                        src={entrada.imagen_qr.startsWith('http') ? entrada.imagen_qr : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${entrada.imagen_qr}`}
+                                        src={getMediaUrl(entrada.imagen_qr)}
                                         alt="Ticket QR"
                                         style={{ width: '100%', imageRendering: 'pixelated' }}
                                     />
@@ -120,7 +120,7 @@ const MyTickets = () => {
 
                                 <button
                                     onClick={() => {
-                                        const url = entrada.imagen_qr.startsWith('http') ? entrada.imagen_qr : `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}${entrada.imagen_qr}`;
+                                        const url = getMediaUrl(entrada.imagen_qr);
                                         const link = document.createElement('a');
                                         link.href = url;
                                         link.setAttribute('download', `Ticket_${entrada.evento_titulo}_${entrada.id.substring(0, 8)}.png`);

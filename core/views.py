@@ -39,6 +39,8 @@ class RegistroClienteView(views.APIView):
             # Personalizamos el token para que use el ID de Cliente
             refresh['user_id'] = cliente.id
             
+            logger.info(f"Nuevo cliente registrado: {cliente.email}")
+            
             return Response({
                 "cliente": ClienteSerializer(cliente).data,
                 "token": {
@@ -46,6 +48,8 @@ class RegistroClienteView(views.APIView):
                     "access": str(refresh.access_token),
                 }
             }, status=status.HTTP_201_CREATED)
+        
+        logger.warning(f"Error en registro de cliente: {serializer.errors}")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

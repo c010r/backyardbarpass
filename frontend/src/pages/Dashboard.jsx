@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { BarChart3, Users, Ticket, TrendingUp, Calendar, RefreshCw, DownloadCloud } from 'lucide-react';
 
 const Dashboard = () => {
@@ -7,15 +7,10 @@ const Dashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
     const fetchStats = async () => {
         try {
             setLoading(true);
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/api/staff/stats/`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
+            const response = await api.get('/staff/stats/');
             setStats(response.data);
         } catch (err) {
             setError("No se pudieron cargar las estadísticas.");
@@ -26,9 +21,7 @@ const Dashboard = () => {
 
     const handleExport = async (eventoId, titulo) => {
         try {
-            const token = localStorage.getItem('token');
-            const response = await axios.get(`${API_URL}/api/staff/export-csv/${eventoId}/`, {
-                headers: { 'Authorization': `Bearer ${token}` },
+            const response = await api.get(`/staff/export-csv/${eventoId}/`, {
                 responseType: 'blob'
             });
 
